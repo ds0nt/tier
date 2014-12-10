@@ -3,9 +3,7 @@ vagrant-coreos-spawner
 
 Tool to launch and manage single vagrant instances running coreos+docker for local development. This makes it simple to develop in an environment that closely matches a production environment running coreos + docker. Any tools to facilitate vagrant + coreos + docker workflow are welcome. 
 
-Uses the stable coreos vagrant box.
-
-Usage
+By default it will spawn an instance running the stable coreos channel.
 
 ## Spawn a CoreOS Instance
 
