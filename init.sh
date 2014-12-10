@@ -11,8 +11,10 @@ git clone https://github.com/coreos/coreos-vagrant.git $1 || exit 1;
 
 cp -vf config/* $1
 
+cp -r share $1/
+cp -r scripts $1/
+
 cd $1
-mkdir share
 
 vagrant up || exit 1;
 
