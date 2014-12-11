@@ -1,8 +1,15 @@
 #!/bin/bash
+
+source `dirname $0`/common.sh
+
 image=$1
 
-vagrant ssh -- /bin/bash << EOF
+usage="Usage: tier rm < image name | all >"
+test_args 1 $@
 
+cd $LOCAL_VAGRANT
+
+vagrant ssh -- /bin/bash -s << EOF
 	if [ "$image" == "all" ]; then
 		containers=(\$(docker ps -a -q));
 		if [ "\${#containers[@]}" == "0" ]; then

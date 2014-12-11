@@ -1,17 +1,19 @@
 #!/bin/bash
 
-vagrant ssh -- /bin/bash << EOF
+source `dirname $0`/common.sh
 
-	dockerid=\$(docker run -d -t -p 80:80 -v /home/core:/home metagen/nodejs-dev);
+image=$1
+name=$2
+arglength=2
 
-	if [ \$? -eq 1 ]; then
-		echo 'Docker Failed to Launch';
-		docker rm \$dockerid;
-		exit 1;
-	fi
+usage="Usage: tier run IMAGE CONTAINER_NAME"
 
-	
-	echo \$dockerid > /home/core/dockerid;
+test_args 2 $@
 
-	echo "Launched" \$dockerid;
-EOF
+if [[ ! $name ]]; then
+	name=$image
+fi
+
+echo "starting image \"$image\" with name \"$name\""
+
+tier exec docker run -d -t -p 8080:80 -v /home/core:/home:ro --name=$name $image
