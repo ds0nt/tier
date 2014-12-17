@@ -6,13 +6,33 @@
 
 TIERDIR=/usr/lib/tier
 SCRIPTSDIR=${TIERDIR}/scripts
-DIR=$(pwd)
 
-USAGE="Usage: tier [init|add|push|rm|run]"
+function upsearch () {
+    test / == "$PWD" && return
+    test -e "$1" && echo "$PWD" && return
+    cd .. && upsearch "$1"
+}
+
+project_dir=$(upsearch .tier)
+
+usage () {
+  echo "Usage: tier <command> [-v] [options]"
+  echo -e "\t init \n\t\t initialize tier in directory"
+  echo -e "\t up \n\t\t start vm instance"
+  echo -e "\t down \n\t\t halt vm instance"
+  echo -e "\t destroy \n\t\t destroy vm, project or project contents"
+  echo -e "\t exec \n\t\t run a command on vm instance"
+  echo -e "\t ssh [container] \n\t\t ssh to instance or a running container"
+  echo -e "\t add \n\t\t add a docker image"
+  echo -e "\t push <image-name> \n\t\t copy a docker image from host os into instance"
+  echo -e "\t run <id|name> \n\t\t start a container of <image> inside instance"
+  echo -e "\t rm <id|all> \n\t\t stop and remove"
+  echo -e "\t container <start|stop> <name|id> \n\t\t start and stop existing containers in instance"
+}
 
 # --- Option processing --------------------------------------------
 if [ $# == 0 ] ; then
-    echo $USAGE
+    usage;
     exit 1;
 fi
 
@@ -22,39 +42,28 @@ shift;
 
 case $subcommand in
   "init")
-    ${SCRIPTSDIR}/init.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="${SCRIPTSDIR}/init.sh $@" ;;
   "up")
-    ${SCRIPTSDIR}/up.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="${SCRIPTSDIR}/up.sh $@" ;;
+  "down")
+    tier_cmd="${SCRIPTSDIR}/down.sh $@" ;;
+  "destroy")
+    tier_cmd="${SCRIPTSDIR}/destroy.sh $@" ;;
   "exec")
-    $SCRIPTSDIR/core_exec.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="$SCRIPTSDIR/core_exec.sh $@" ;;
   "ssh")
-    $SCRIPTSDIR/ssh.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="$SCRIPTSDIR/ssh.sh $@" ;;
   "add")
-    ${SCRIPTSDIR}/add_image.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="${SCRIPTSDIR}/add_image.sh $@" ;;
   "push")
-    ${SCRIPTSDIR}/push_image.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="${SCRIPTSDIR}/push_image.sh $@" ;;
   "rm")
-    $SCRIPTSDIR/rm_image.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="$SCRIPTSDIR/rm_image.sh $@" ;;
   "run")
-    $SCRIPTSDIR/run_image.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="$SCRIPTSDIR/run_image.sh $@" ;;
   "container")
-    $SCRIPTSDIR/container.sh "$@"
-    exit $?;
-    ;;
+    tier_cmd="$SCRIPTSDIR/container.sh $@" ;;
 esac
+echo $tier_cmd;
+cd $project_dir && $tier_cmd
+exit $?;

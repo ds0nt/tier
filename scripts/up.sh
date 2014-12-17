@@ -1,35 +1,14 @@
 #!/bin/bash
 
-vagrant=/usr/bin/vagrant
-virtualbox=/usr/bin/virtualbox
+source `dirname $0`/common.sh
 
-VAGRANTCONFDIR=vm
-VAGRANTDIR=.tier/vagrant
-TIER=.tier
+usage="Usage: tier up"
 
-if [[ ! -d $TIER ]]; then
-	echo "tier project is not initialized";
-	exit 1;
-fi
+cp -f $LOCAL_VM_CONF/* $LOCAL_VAGRANT
 
-[ "$1" = "-v" ] && { VERBOSE=1; shift; }
-
-if [[ $VERBOSE ]]; then
-	cp () { command cp --verbose "$@"; }		
-fi
-
-verbose () {
-	if $VERBOSE; then
-		echo "$@"
-	fi
-}
-
-cp -f $VAGRANTCONFDIR/* $VAGRANTDIR
-
-cd $VAGRANTDIR
  
 echo 'Tier is booting coreos instance'
 
-vagrant up || exit 1;
+local_vagrant up || exit 1;
 
-vagrant ssh core-01 -- -A || exit 1;
+local_vagrant ssh -- -A || exit 1;

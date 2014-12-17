@@ -16,4 +16,4 @@ fi
 
 echo "starting image \"$image\" with name \"$name\""
 
-tier exec docker run -d -t -p 8080:80 -v /home/core:/home:ro --name=$name $image
+tier exec docker run -d -t -p 2735:80 -v /home/core:/home:ro --name=$name $image

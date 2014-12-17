@@ -1,8 +1,12 @@
 #!/bin/bash
 
-cd /home/core/share
+echo 'running provision.sh'
 
-touch README.md
+home=~
 
-# docker pull dockerfile/nodejs
-# docker pull -P -i google/nodejs-runtime /bin/sh
+# make a global command called "tier"
+# /usr/bin/tier -> ~/share/tier.sh 
+if [[ -f $home/share/tier.sh ]]; then
+	ln -s tier.sh /usr/bin/tier
+	chmod +x tier.sh
+fi
